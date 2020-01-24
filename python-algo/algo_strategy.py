@@ -26,7 +26,7 @@ class AlgoStrategy(gamelib.AlgoCore):
     #Declate some constants to avoid magic numbers
     CORES_REQUIRED = 47
     BITS_REQUIRED = 15
-    LOW_HEALTH_THRESHHOLD = 15
+    LOW_HEALTH_THRESHHOLD = 12
 
     #The way we track cores last turn is one example of how to maintain a variable across multiple turns
     cores_last_turn = 0
@@ -92,8 +92,8 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def build_defences(self, game_state):
-        primary_filters = [[4, 13], [23, 13], [4, 10], [23, 10]]
-        primary_destructors = [[0, 13], [1, 13], [3, 13], [24, 13], [26, 13], [27, 13], [2, 12], [3, 12], [24, 12], [25, 12], [3, 11], [24, 11], [3, 10], [24, 10]]
+        primary_filters = [[2, 13], [4, 13], [23, 13], [25, 13]]
+        primary_destructors = [[0, 13], [1, 13], [3, 13], [24, 13], [26, 13], [27, 13], [2, 12], [25, 12], [3, 10], [24, 10]]
 
         game_state.attempt_spawn(DESTRUCTOR, primary_destructors)
         game_state.attempt_spawn(FILTER, primary_filters)
@@ -107,7 +107,7 @@ class AlgoStrategy(gamelib.AlgoCore):
                 #We have everything we need! Activate the machine!
                 gamelib.debug_write('The end is near!')
                 self.doomsday_device_active = True
-            elif cores < self.cores_last_turn - 3 or (cores < 5 and game_state.turn_number > 2) or game_state.my_health <= self.LOW_HEALTH_THRESHHOLD:
+            elif cores < self.cores_last_turn - 3 or (cores < 5 and game_state.turn_number > 5) or game_state.my_health <= self.LOW_HEALTH_THRESHHOLD:
                 gamelib.debug_write(f'Cores: {cores}, Cores last turn: {self.cores_last_turn}, ')
                 gamelib.debug_write('Our plans are being thwarted, it\'s time for plan B!')
                 self.plan_b_active = True
@@ -117,7 +117,7 @@ class AlgoStrategy(gamelib.AlgoCore):
 
     def stall(self, game_state):
         cores = game_state.get_resource(game_state.CORES, 0)
-        if game_state.my_health < 28 and cores < self.CORES_REQUIRED * 0.75:
+        if game_state.my_health < 25 and cores < self.CORES_REQUIRED * 0.75:
             gamelib.debug_write('We need more time! Sending some lackeys to stall!')
 
             #Send out 2 lackeys
@@ -129,10 +129,10 @@ class AlgoStrategy(gamelib.AlgoCore):
             possilbe_locations = bottom_left_locations + bottom_right_locations
 
             #Send out 2 random lackies to stall the game
-            if game_state.my_health < 20:
+            if game_state.my_health < 18:
                 gamelib.debug_write('One last line of defence!')
-                emergency_destructors = [[23, 12], [23, 11], [4, 12], [4, 11], [13, 8], [14, 8]]
-                emergency_filters = [[12, 8], [15, 8]]
+                emergency_destructors = [[13, 8], [14, 8]]
+                emergency_filters = [[12, 9], [15, 9]]
                 game_state.attempt_spawn(DESTRUCTOR, emergency_destructors, 1)
                 game_state.attempt_spawn(FILTER, emergency_filters, 1)
                 for _ in range(1):
