@@ -119,10 +119,6 @@ class AlgoStrategy(gamelib.AlgoCore):
         cores = game_state.get_resource(game_state.CORES, 0)
         if game_state.my_health < 25 and cores < self.CORES_REQUIRED * 0.75:
             gamelib.debug_write('We need more time! Sending some lackeys to stall!')
-
-            #Send out 2 lackeys
-            game_state.attempt_spawn(SCRAMBLER, [7, 6], 1)
-            game_state.attempt_spawn(SCRAMBLER, [20, 6], 1)
             
             bottom_left_locations = game_state.game_map.get_edge_locations(game_state.game_map.BOTTOM_LEFT)
             bottom_right_locations = game_state.game_map.get_edge_locations(game_state.game_map.BOTTOM_RIGHT)
@@ -135,9 +131,6 @@ class AlgoStrategy(gamelib.AlgoCore):
                 emergency_filters = [[12, 9], [15, 9]]
                 game_state.attempt_spawn(DESTRUCTOR, emergency_destructors, 1)
                 game_state.attempt_spawn(FILTER, emergency_filters, 1)
-                for _ in range(1):
-                    random_index = random.randrange(0, len(possilbe_locations))
-                    game_state.attempt_spawn(SCRAMBLER, possilbe_locations[random_index])
 
 
     def plan_b(self, game_state):
