@@ -97,6 +97,8 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         game_state.attempt_spawn(DESTRUCTOR, primary_destructors)
         game_state.attempt_spawn(FILTER, primary_filters)
+        game_state.attempt_upgrade(primary_filters)
+        game_state.attempt_upgrade(primary_destructors)
 
         #If we haven't initiated an evil plan yet, lets figure out what to do...
         if not self.doomsday_device_active and not self.plan_b_active:
@@ -217,6 +219,7 @@ class AlgoStrategy(gamelib.AlgoCore):
             [17, 3], [11, 2], [12, 2], [12, 1], [14, 1], [15, 1]]
             game_state.attempt_spawn(ENCRYPTOR, the_blueprint)
             game_state.attempt_spawn(PING, [14,0], 666) #Attempt to spawn 666 pings at this location. The boss prefers to aim high.
+            game_state.attempt_upgrade(the_blueprint)
             self.charging_up = True
         else:
             self.charging_up = False
