@@ -24,7 +24,7 @@ the actual current map state.
 class AlgoStrategy(gamelib.AlgoCore):
 
     #Declate some constants to avoid magic numbers
-    CORES_REQUIRED = 30
+    CORES_REQUIRED = 25
     BITS_REQUIRED = 15
     LOW_HEALTH_THRESHHOLD = 12
 
@@ -35,7 +35,7 @@ class AlgoStrategy(gamelib.AlgoCore):
     plan_b_initiated = False
     plan_b_encryptors = []
     plan_b_location = 0
-    charging_up = False
+    charging_up = 0
 
     def __init__(self):
         super().__init__()
@@ -85,6 +85,7 @@ class AlgoStrategy(gamelib.AlgoCore):
             if random.randrange(0, 2) == 0:
                 game_state.attempt_spawn(SCRAMBLER, [13,0], 100)
             game_state.attempt_spawn(SCRAMBLER, [14,0], 100)
+            return
 
 
         self.build_defences(game_state)
@@ -203,13 +204,17 @@ class AlgoStrategy(gamelib.AlgoCore):
                                 self.plan_b_encryptors.append(check_tile)
         
         #After initializing, each successive time... activate plan B!
-        if not self.charging_up:
+        if self.charging_up > 1:
             game_state.attempt_spawn(ENCRYPTOR, self.plan_b_encryptors)
-            game_state.attempt_spawn(PING, self.plan_b_location, 666) 
-            self.charging_up = True
+            last_tile = game_state.find_path_to_edge(self.plan_b_location)[-1]
+            target_edge = game_state.game_map.get_edge_locations(game_state.get_target_edge(self.plan_b_location))
+            if last_tile in target_edge:
+                game_state.attempt_spawn(PING, self.plan_b_location, 666) 
+            game_state.attempt_spawn(EMP, self.plan_b_location, 666) 
+            self.charging_up = 0
         else:
             #We only fire our attack every other turn
-            self.charging_up = False
+            self.charging_up += 1
 
     
     def GG(self, game_state):
@@ -218,18 +223,22 @@ class AlgoStrategy(gamelib.AlgoCore):
         You can get a copy a large number of points like this using community created tool like this one: 
         https://www.kevinbai.design/terminal-map-maker 
         '''
-        if not self.charging_up:
+        if self.charging_up > 1:
             the_blueprint = [[7, 7], [8, 7], [10, 7], [11, 7], [12, 7], [13, 7], [14, 7], [15, 7], [16, 7], [7, 6], [8, 6], 
             [10, 6], [11, 6], [12, 6], [13, 6], [14, 6], [15, 6], [16, 6], [17, 6], [8, 5], [17, 5], [18, 5], [9, 4], [10, 4], 
             [11, 4], [12, 4], [13, 4], [14, 4], [15, 4], [17, 4], [18, 4], [10, 3], [11, 3], [12, 3], [13, 3], [14, 3], [15, 3], 
             [17, 3], [11, 2], [12, 2], [12, 1], [14, 1], [15, 1]]
-            the_blueprint = the_blueprint.reverse()
+            the_blueprint.reverse()
             game_state.attempt_spawn(ENCRYPTOR, the_blueprint)
-            game_state.attempt_spawn(PING, [14,0], 666) #Attempt to spawn 666 pings at this location. The boss prefers to aim high.
+            last_tile = game_state.find_path_to_edge([14,0])[-1]
+            target_edge = game_state.game_map.get_edge_locations(game_state.get_target_edge([14,0]))
+            if last_tile in target_edge:
+                game_state.attempt_spawn(PING, [14,0], 666) 
+            game_state.attempt_spawn(EMP, [14,0], 666) 
             game_state.attempt_upgrade(the_blueprint)
-            self.charging_up = True
+            self.charging_up = 0
         else:
-            self.charging_up = False
+            self.charging_up += 1
 
 
 
