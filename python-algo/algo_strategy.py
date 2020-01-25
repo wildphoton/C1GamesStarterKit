@@ -24,7 +24,7 @@ the actual current map state.
 class AlgoStrategy(gamelib.AlgoCore):
 
     #Declate some constants to avoid magic numbers
-    CORES_REQUIRED = 47
+    CORES_REQUIRED = 30
     BITS_REQUIRED = 15
     LOW_HEALTH_THRESHHOLD = 12
 
@@ -81,6 +81,12 @@ class AlgoStrategy(gamelib.AlgoCore):
         This strategy is based around surviving and attempting to save resources, 
         then choosing an evil plan to close out the game
         """
+        if game_state.turn_number == 0:
+            if random.randrange(0, 2) == 0:
+                game_state.attempt_spawn(SCRAMBLER, [13,0], 100)
+            game_state.attempt_spawn(SCRAMBLER, [14,0], 100)
+
+
         self.build_defences(game_state)
 
         if self.doomsday_device_active:
@@ -92,13 +98,13 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def build_defences(self, game_state):
-        primary_filters = [[2, 13], [4, 13], [23, 13], [25, 13]]
-        primary_destructors = [[0, 13], [1, 13], [3, 13], [24, 13], [26, 13], [27, 13], [2, 12], [25, 12], [3, 10], [24, 10]]
+        primary_filters = [[0, 13], [26, 13], [1, 13], [27, 13], [2, 13], [4, 13], [23, 13], [25, 13]]
+        primary_destructors = [[3, 13], [24, 13], [2, 12], [25, 12], [1, 12], [26, 12]]
+        upgrade = [[2, 12], [25, 12]]
 
         game_state.attempt_spawn(DESTRUCTOR, primary_destructors)
         game_state.attempt_spawn(FILTER, primary_filters)
-        game_state.attempt_upgrade(primary_filters)
-        game_state.attempt_upgrade(primary_destructors)
+        game_state.attempt_upgrade(upgrade)
 
         #If we haven't initiated an evil plan yet, lets figure out what to do...
         if not self.doomsday_device_active and not self.plan_b_active:
@@ -109,7 +115,7 @@ class AlgoStrategy(gamelib.AlgoCore):
                 #We have everything we need! Activate the machine!
                 gamelib.debug_write('The end is near!')
                 self.doomsday_device_active = True
-            elif cores < self.cores_last_turn - 3 or (cores < 5 and game_state.turn_number > 5) or game_state.my_health <= self.LOW_HEALTH_THRESHHOLD:
+            elif cores < self.cores_last_turn - 3 or (cores < 5 and game_state.turn_number > 10) or game_state.my_health <= self.LOW_HEALTH_THRESHHOLD:
                 gamelib.debug_write(f'Cores: {cores}, Cores last turn: {self.cores_last_turn}, ')
                 gamelib.debug_write('Our plans are being thwarted, it\'s time for plan B!')
                 self.plan_b_active = True
@@ -217,6 +223,7 @@ class AlgoStrategy(gamelib.AlgoCore):
             [10, 6], [11, 6], [12, 6], [13, 6], [14, 6], [15, 6], [16, 6], [17, 6], [8, 5], [17, 5], [18, 5], [9, 4], [10, 4], 
             [11, 4], [12, 4], [13, 4], [14, 4], [15, 4], [17, 4], [18, 4], [10, 3], [11, 3], [12, 3], [13, 3], [14, 3], [15, 3], 
             [17, 3], [11, 2], [12, 2], [12, 1], [14, 1], [15, 1]]
+            the_blueprint = the_blueprint.reverse()
             game_state.attempt_spawn(ENCRYPTOR, the_blueprint)
             game_state.attempt_spawn(PING, [14,0], 666) #Attempt to spawn 666 pings at this location. The boss prefers to aim high.
             game_state.attempt_upgrade(the_blueprint)
