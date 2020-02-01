@@ -342,6 +342,9 @@ class AlgoStrategy(gamelib.AlgoCore):
             
             if game_state.number_affordable(DESTRUCTOR) >= 6:
                 self.build_luxury_defense(game_state)
+            
+            if game_state.number_affordable(DESCRUCTOR) >= 3:
+                self.build_luxury_walls(game_state)
 
 
     def build_defences(self, game_state):
@@ -385,8 +388,17 @@ class AlgoStrategy(gamelib.AlgoCore):
         count = 0
         for loc in luxury_destructor_locs:
             count += game_state.attempt_spawn(DESTRUCTOR, loc, 1)
-            if count >= 4:
+            if game_state.number_affordable(DESTRUCTOR) < 3:
                 return
+    
+    def build_luxury_walls(self, game_state):
+        
+        luxury_wall_locs = [[0,13],[1,13],[2,13],[4,13],[7,13],[8,13],[9,13],[11,13],[12,13],[13,13],[14,13],[15,13],[17,13],[18,13],[19,13],[20,13],[23,13],[25,13],[26,13],[27,13]]
+        for loc in random.shuffle(luxury_wall_locs):
+            self.spawn_and_upgrade_FILTER(game_state, loc)
+            if game_state.number_affordable(DESTRUCTOR) < 3:
+                return
+            
 
     def protect_left_corner(self,game_state):
 
