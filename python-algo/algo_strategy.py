@@ -109,6 +109,22 @@ class AlgoStrategy(gamelib.AlgoCore):
         """
         if we use 
         """
+        
+        # Zhen Lin
+        self.use_core(game_state)
+        
+        # Rui Bin
+        self.use_bin(game_state)
+    
+    def use_bin(self, game_state):
+        """
+        how to use bins
+        """
+    
+    def use_core(self, game_state):
+        """
+        how to use cores
+        """
 
 
     def build_defences(self, game_state):
