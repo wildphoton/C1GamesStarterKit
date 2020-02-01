@@ -157,10 +157,13 @@ class AlgoStrategy(gamelib.AlgoCore):
         return False
 
 
-
-
-
-
+    """
+    New for competitions
+    """
+    def spawn_and_upgrade_FILTER(self, game_state, filters_locations):
+        for loc in filters_locations:
+            game_state.attempt_spawn(FILTER, loc)
+            game_state.attempt_upgrade(loc)
 
     """
     NOTE: All the methods after this point are part of the sample starter-algo
@@ -222,7 +225,9 @@ class AlgoStrategy(gamelib.AlgoCore):
         
         # Place filters in front of destructors to soak up damage for them
         filter_locations = [[8, 12], [19, 12]]
-        game_state.attempt_spawn(FILTER, filter_locations)
+        # game_state.attempt_spawn(FILTER, filter_locations)
+        self.spawn_and_upgrade_FILTER(game_state, filter_locations)
+
         # upgrade filters so they soak more damage
         game_state.attempt_upgrade(filter_locations)
 
@@ -242,7 +247,9 @@ class AlgoStrategy(gamelib.AlgoCore):
             game_state.attempt_spawn(DESTRUCTOR, loc, 1)
         for loc in yellow_filters_points:
             self.if_do(0.7)
-            game_state.attempt_spawn(FILTER, loc, 1)
+            # game_state.attempt_spawn(FILTER, loc, 1)
+            self.spawn_and_upgrade_FILTER(game_state, loc)
+
         for loc in yellow_encryptors_points:
             self.if_do(0.7)
             game_state.attempt_spawn(ENCRYPTOR, loc, 1)
@@ -257,7 +264,8 @@ class AlgoStrategy(gamelib.AlgoCore):
             game_state.attempt_spawn(DESTRUCTOR, loc, 1)
         for loc in orange_filters_points:
             self.if_do(0.7)
-            game_state.attempt_spawn(FILTER, loc, 1)
+            # game_state.attempt_spawn(FILTER, loc, 1)
+            self.spawn_and_upgrade_FILTER(game_state, loc)
 
     def if_do(self,cut_off=0.5):
         r = random.random()
