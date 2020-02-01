@@ -240,8 +240,8 @@ class AlgoStrategy(gamelib.AlgoCore):
         else:
             # Now let's analyze the enemy base to see where their defenses are concentrated.
             # If they have many units in the front we can build a line for our EMPs to attack them at long range.
-            if self.detect_enemy_unit(game_state, unit_type=None, valid_x=None, valid_y=[14, 15]) > 10:
-                self.emp_line_strategy(game_state)
+            # if self.detect_enemy_unit(game_state, unit_type=None, valid_x=None, valid_y=[14, 15]) > 10:
+            self.emp_line_strategy(game_state)
 
             # if self._got_scored_on_corner(left=True):
             #     self.emp_adaptive(game_state, left=True)  # check if have attacked
