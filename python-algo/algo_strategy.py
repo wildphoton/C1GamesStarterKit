@@ -354,13 +354,13 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
             # If we have spare cores, let's build some Encryptors to boost our Pings' health.
-            encryptor_locations = [[6,10], [21,10]]
+            encryptor_locations = [[6,10], [21,10], [12, 10], [14, 10]]
             game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
             
             if game_state.number_affordable(DESTRUCTOR) >= 6:
                 self.build_luxury_defense(game_state)
             
-            if game_state.number_affordable(DESTRUCTOR) >= 3:
+            if game_state.number_affordable(DESTRUCTOR) >= 6:
                 self.build_luxury_walls(game_state)
 
 
@@ -394,14 +394,14 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.spawn_and_upgrade_FILTER(game_state, edge_locs)
 
 
-        if self._got_scored_on_corner(left=True):
+        if self._got_scored_on_corner(left=True) or game_state.number_affordable(DESTRUCTOR) >= 6:
             self.protect_left_corner(game_state) # check if have attacked
 
-        if self._got_scored_on_corner(left=False):
+        if self._got_scored_on_corner(left=False) or game_state.number_affordable(DESTRUCTOR) >= 6:
             self.protect_right_corner(game_state) # check if have attacked
 
     def build_luxury_defense(self, game_state):
-        luxury_destructor_locs = [[2,11],[25,11],[3,13],[24,13],[6,13],[21,13],[14,12],[16,13],[10,13]]
+        luxury_destructor_locs = [[1,12],[26,12],[3,13],[24,13],[6,13],[21,13],[14,12],[16,13],[10,13]]
         count = 0
         for loc in luxury_destructor_locs:
             count += game_state.attempt_spawn(DESTRUCTOR, loc, 1)
