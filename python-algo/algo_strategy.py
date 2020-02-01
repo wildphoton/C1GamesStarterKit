@@ -188,12 +188,13 @@ class AlgoStrategy(gamelib.AlgoCore):
             # for each loc build a destructor
             # for loc in destr_locs_multilevel[level]:
             game_state.attempt_spawn(DESTRUCTOR, destr_locs_multilevel[level])
-            if not self.check_finish_level(game_state, destr_locs_multilevel[level])
+            if not self.check_finish_level(game_state, destr_locs_multilevel[level]):
                 break
 
             # build filter wall
-            for loc in destr_locs_multilevel[level]:
-                self.spawn_and_upgrade_FILTER(game_state, [loc[0], loc[1]+1])
+            if level == 0:
+                for loc in destr_locs_multilevel[level]:
+                    self.spawn_and_upgrade_FILTER(game_state, [loc[0], loc[1]+1])
 
             if level > 0:
                 for loc in destr_locs_multilevel[level-1]:
