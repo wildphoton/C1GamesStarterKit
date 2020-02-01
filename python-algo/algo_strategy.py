@@ -300,8 +300,8 @@ class AlgoStrategy(gamelib.AlgoCore):
             self.protect_right_corner(game_state) # check if have attacked
 
     def protect_left_corner(self,game_state):
-        yellow_destructors_points = [[1,12],[2,12]]
-        yellow_filters_points = [[0,13],[3,12],[1,13],[2,13]]
+        yellow_destructors_points = [[1,12],[2,12],[0,13]]
+        yellow_filters_points = [[3,12],[1,13],[2,13]]
         for loc in yellow_destructors_points:
 #             self.if_do(0.7)
             game_state.attempt_spawn(DESTRUCTOR, loc, 1)
@@ -312,8 +312,8 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def protect_right_corner(self,game_state):
-        orange_destructors_points = [[25,12],[26,12]]
-        orange_filters_points = [[27,13],[24,12],[26,13],[25,13]]
+        orange_destructors_points = [[25,12],[26,12],[27,13]]
+        orange_filters_points = [[24,12],[26,13],[25,13]]
         for loc in orange_destructors_points:
 #             self.if_do(0.7)
             game_state.attempt_spawn(DESTRUCTOR, loc, 1)
@@ -384,6 +384,8 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         # Now let's build out a line of stationary units. This will prevent our EMPs from running into the enemy base.
         # Instead they will stay at the perfect distance to attack the front two rows of the enemy base.
+        game_state.attempt_spawn(DESTRUCTOR, [1,12], 1)
+        game_state.attempt_spawn(DESTRUCTOR, [26,12], 1)
         for x in range(27, 5, -1):
             if cheapest_unit == FILTER:
                 self.spawn_and_upgrade_FILTER(game_state, [x, 12])
