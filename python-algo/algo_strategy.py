@@ -161,9 +161,43 @@ class AlgoStrategy(gamelib.AlgoCore):
     New for competitions
     """
     def spawn_and_upgrade_FILTER(self, game_state, filters_locations):
+        if isinstance(filters_locations[0], int):
+            filters_locations = [filters_locations]
+
         for loc in filters_locations:
             game_state.attempt_spawn(FILTER, loc)
             game_state.attempt_upgrade(loc)
+
+    def frontier_defense(self, game_state):
+        self.frontier_destructor(game_state)
+
+
+    def frontier_destructor(self, game_state):
+        # build deconstructor by levels
+        destr_locs_multilevel = \
+            [
+                [[2, 12], [25, 12], [13, 12], [19, 12], [8, 12]], # level1
+                [[23, 11], [4, 11]],
+                [[9, 10], [18, 10]],
+
+            ]
+        n_levels = len(destr_locs_multilevel)
+
+        for level in range(n_levels):
+
+            # for each loc build a destructor
+            for loc in destr_locs_multilevel[level]:
+                game_state.attempt_spawn(DESTRUCTOR, loc)
+
+            # build filter wall
+            for loc in destr_locs_multilevel[level]:
+                self.spawn_and_upgrade_FILTER(game_state, [loc[0], loc[1]+1])
+
+            if level > 0:
+                for loc in destr_locs_multilevel[level-1]:
+                    self.spawn_and_upgrade_FILTER(game_state, [loc[0]+1, loc[1]])
+                for loc in destr_locs_multilevel[level-1]:
+                    self.spawn_and_upgrade_FILTER(game_state, [loc[0]-1, loc[1]])
 
     """
     NOTE: All the methods after this point are part of the sample starter-algo
@@ -219,17 +253,20 @@ class AlgoStrategy(gamelib.AlgoCore):
         # More community tools available at: https://terminal.c1games.com/rules#Download
 
         # Place destructors that attack enemy units
-        destructor_locations = [[0, 13], [27, 13], [8, 11], [19, 11], [13, 11], [14, 11]]
+        # destructor_locations = [[0, 13], [27, 13], [8, 11], [19, 11], [13, 11], [14, 11]]
         # attempt_spawn will try to spawn units if we have resources, and will check if a blocking unit is already there
-        game_state.attempt_spawn(DESTRUCTOR, destructor_locations)
-        
+        # game_state.attempt_spawn(DESTRUCTOR, destructor_locations)
+
+        # build frontier defense line
+        self.frontier_defense(game_state)
+
         # Place filters in front of destructors to soak up damage for them
-        filter_locations = [[8, 12], [19, 12]]
+        # filter_locations = [[8, 12], [19, 12]]
         # game_state.attempt_spawn(FILTER, filter_locations)
-        self.spawn_and_upgrade_FILTER(game_state, filter_locations)
+        # self.spawn_and_upgrade_FILTER(game_state, filter_locations)
 
         # upgrade filters so they soak more damage
-        game_state.attempt_upgrade(filter_locations)
+        # game_state.attempt_upgrade(filter_locations)
 
 
         if self._got_scored_on_corner(left=True):
@@ -321,12 +358,15 @@ class AlgoStrategy(gamelib.AlgoCore):
         # Now let's build out a line of stationary units. This will prevent our EMPs from running into the enemy base.
         # Instead they will stay at the perfect distance to attack the front two rows of the enemy base.
         for x in range(27, 5, -1):
-            game_state.attempt_spawn(cheapest_unit, [x, 11])
+            if cheapest_unit == FILTER:
+                self.spawn_and_upgrade_FILTER(game_state, [x, 12])
+            else:
+                game_state.attempt_spawn(cheapest_unit, [x, 12])
 
         # Now spawn EMPs next to the line
         # By asking attempt_spawn to spawn 1000 units, it will essentially spawn as many as we have resources for
         gamelib.debug_write(EMP_INFO.cost)
-        if game_state.get_resources(0)[1]// EMP_INFO.cost >= 5:
+        if game_state.number_affordable(EMP) >= 5:
             game_state.attempt_spawn(EMP, [24, 10], 1000)
 
     def least_damage_spawn_location(self, game_state, location_options):
