@@ -360,7 +360,7 @@ class AlgoStrategy(gamelib.AlgoCore):
             if game_state.number_affordable(DESTRUCTOR) >= 6:
                 self.build_luxury_defense(game_state)
             
-            if game_state.number_affordable(DESCRUCTOR) >= 3:
+            if game_state.number_affordable(DESTRUCTOR) >= 3:
                 self.build_luxury_walls(game_state)
 
 
