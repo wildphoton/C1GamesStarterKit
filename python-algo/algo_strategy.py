@@ -276,31 +276,25 @@ class AlgoStrategy(gamelib.AlgoCore):
             self.protect_right_corner(game_state) # check if have attacked
 
     def protect_left_corner(self,game_state):
-        yellow_destructors_points = [[1, 13], [1, 12], [3, 11], [4, 11], [9, 11], [9, 10], [9, 9]]
-        yellow_encryptors_points = [[4, 10]]
-        yellow_filters_points = [[0, 13], [2, 13], [2, 12], [3, 12], [4, 12], [9, 12], [8, 11], [10, 11]]
+        yellow_destructors_points = [[1,12]]
+        yellow_filters_points = [[0,13],[3,12],[1,13]]
         for loc in yellow_destructors_points:
-            self.if_do(0.7)
+#             self.if_do(0.7)
             game_state.attempt_spawn(DESTRUCTOR, loc, 1)
         for loc in yellow_filters_points:
-            self.if_do(0.7)
+#             self.if_do(0.7)
             # game_state.attempt_spawn(FILTER, loc, 1)
             self.spawn_and_upgrade_FILTER(game_state, loc)
 
-        for loc in yellow_encryptors_points:
-            self.if_do(0.7)
-            game_state.attempt_spawn(ENCRYPTOR, loc, 1)
 
     def protect_right_corner(self,game_state):
-        orange_destructors_points = [[24, 13], [25, 13], [24, 12], [25, 12], [26, 12], [23, 11], [24, 11], [25, 11], [23, 10], [23, 9]]
-        orange_filters_points = [[23, 13], [26, 13], [23, 12]]
-        # orange_destructors_points = [[24, 12], [25, 12], [24, 11]]
-        # orange_filters_points = [[24, 13], [25, 13], [26, 13]]
+        orange_destructors_points = [[26,12]]
+        orange_filters_points = [[27,13],[24,12]]
         for loc in orange_destructors_points:
-            self.if_do(0.7)
+#             self.if_do(0.7)
             game_state.attempt_spawn(DESTRUCTOR, loc, 1)
         for loc in orange_filters_points:
-            self.if_do(0.7)
+#             self.if_do(0.7)
             # game_state.attempt_spawn(FILTER, loc, 1)
             self.spawn_and_upgrade_FILTER(game_state, loc)
 
