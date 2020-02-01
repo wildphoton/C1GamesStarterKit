@@ -4,7 +4,7 @@ import math
 import warnings
 from sys import maxsize
 import json
-
+import enemy_info
 
 """
 Most of the algo code you write will be in this file unless you create new
@@ -44,8 +44,11 @@ class AlgoStrategy(gamelib.AlgoCore):
         # This is a good place to do initial setup
         self.scored_on_locations = []
 
-    
-        
+        EMP_range = gamelib.GameUnit(EMP, self.config).attackRange()
+        gamelib.debug_write("Got scored on at: {}".format(EMP_range))
+
+        # self.frontier_x = [x, range(7, 21))]
+
 
     def on_turn(self, turn_state):
         """
@@ -59,9 +62,74 @@ class AlgoStrategy(gamelib.AlgoCore):
         gamelib.debug_write('Performing turn {} of your custom algo strategy'.format(game_state.turn_number))
         game_state.suppress_warnings(True)  #Comment or remove this line to enable warnings.
 
-        self.starter_strategy(game_state)
+        self.our_strategy_V1(game_state)
 
         game_state.submit_turn()
+
+
+
+
+    """
+    Our strategy
+    """
+
+    def our_strategy_V1(self, game_state):
+        """
+        if we use
+        """
+        stationary_units = [FILTER, DESTRUCTOR, ENCRYPTOR]
+        cheapest_unit = FILTER
+        for unit in stationary_units:
+            unit_class = gamelib.GameUnit(unit, game_state.config)
+            if unit_class.cost[game_state.BITS] < gamelib.GameUnit(cheapest_unit, game_state.config).cost[
+                game_state.BITS]:
+                cheapest_unit = unit
+
+        # Now let's build out a line of stationary units. This will prevent our EMPs from running into the enemy base.
+        # Instead they will stay at the perfect distance to attack the front two rows of the enemy base.
+
+        self.attack_side = 0  # 0 left, 1 right
+
+        # determine where to build the wall of cheapest units
+        self.build_line(game_state)
+
+    def build_defense_line(self, game_state):
+        """
+        how to use bins
+        """
+
+        # self.line_y = get_frountier(deconstrutor) - range(EMP_attack) + 1
+
+        # for x in range(27, 5, -1):
+        #     game_state.attempt_spawn(cheapest_unit, [x, 11])
+
+    def emp_attacks(self, game_state):
+        """
+        how to use cores
+        """
+        # Now spawn EMPs next to the line
+        # By asking attempt_spawn to spawn 1000 units, it will essentially spawn as many as we have resources for
+        # game_state.attempt_spawn(EMP, [24, 10], 1000)
+
+    def build_Encryptor(self, game_state):
+        pass
+
+    def add_scrambler(self, game_state):
+        pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     """
@@ -76,7 +144,6 @@ class AlgoStrategy(gamelib.AlgoCore):
         For offense we will use long range EMPs if they place stationary units near the enemy's front.
         If there are no stationary units to attack in the front, we will send Pings to try and score quickly.
         """
-        print("Xu Ge Niu Bi")
         # First, place basic defenses
         self.build_defences(game_state)
         # Now build reactive defenses based on where the enemy scored
@@ -104,27 +171,6 @@ class AlgoStrategy(gamelib.AlgoCore):
                 # Lastly, if we have spare cores, let's build some Encryptors to boost our Pings' health.
                 encryptor_locations = [[13, 2], [14, 2], [13, 3], [14, 3]]
                 game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
-
-    def pure_strategy_V1(self, game_state):
-        """
-        if we use 
-        """
-        
-        # Zhen Lin
-        self.use_core(game_state)
-        
-        # Rui Bin
-        self.use_bin(game_state)
-    
-    def use_bin(self, game_state):
-        """
-        how to use bins
-        """
-    
-    def use_core(self, game_state):
-        """
-        how to use cores
-        """
 
 
     def build_defences(self, game_state):
