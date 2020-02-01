@@ -104,6 +104,12 @@ class AlgoStrategy(gamelib.AlgoCore):
                 encryptor_locations = [[13, 2], [14, 2], [13, 3], [14, 3]]
                 game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
 
+    def pure_strategy_V1(self, game_state):
+        """
+        if we use 
+        """
+
+
     def build_defences(self, game_state):
         """
         Build basic defenses using hardcoded locations.
