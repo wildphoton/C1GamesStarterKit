@@ -276,8 +276,8 @@ class AlgoStrategy(gamelib.AlgoCore):
             self.protect_right_corner(game_state) # check if have attacked
 
     def protect_left_corner(self,game_state):
-        yellow_destructors_points = [[1,12]]
-        yellow_filters_points = [[0,13],[3,12],[1,13]]
+        yellow_destructors_points = [[1,12],[2,12]]
+        yellow_filters_points = [[0,13],[3,12],[1,13],[2,13]]
         for loc in yellow_destructors_points:
 #             self.if_do(0.7)
             game_state.attempt_spawn(DESTRUCTOR, loc, 1)
@@ -288,8 +288,8 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def protect_right_corner(self,game_state):
-        orange_destructors_points = [[26,12]]
-        orange_filters_points = [[27,13],[24,12]]
+        orange_destructors_points = [[25,12][26,12]]
+        orange_filters_points = [[27,13],[24,12],[26,13],[25,13]]
         for loc in orange_destructors_points:
 #             self.if_do(0.7)
             game_state.attempt_spawn(DESTRUCTOR, loc, 1)
@@ -297,6 +297,15 @@ class AlgoStrategy(gamelib.AlgoCore):
 #             self.if_do(0.7)
             # game_state.attempt_spawn(FILTER, loc, 1)
             self.spawn_and_upgrade_FILTER(game_state, loc)
+            
+    def protect_center(self, game_state):
+        center_destructors_points = [[13,12],[14,12],[9,9],[18,9]]
+        center_filter_points = [[13,13],[14,13],[12,12],[15,12]]
+        for loc in center_destructors_points:
+            game_state.attempt_spawn(DESTRUCTOR, loc, 1)
+        for loc in center_filter_points:
+            self.spawn_and_upgrade_FILTER(game_state, loc)
+        
 
     def if_do(self,cut_off=0.5):
         r = random.random()
