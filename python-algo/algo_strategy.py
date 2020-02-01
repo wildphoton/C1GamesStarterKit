@@ -411,7 +411,8 @@ class AlgoStrategy(gamelib.AlgoCore):
     def build_luxury_walls(self, game_state):
         
         luxury_wall_locs = [[0,13],[1,13],[2,13],[4,13],[7,13],[8,13],[9,13],[11,13],[12,13],[13,13],[14,13],[15,13],[17,13],[18,13],[19,13],[20,13],[23,13],[25,13],[26,13],[27,13]]
-        for loc in random.shuffle(luxury_wall_locs):
+        random.shuffle(luxury_wall_locs)
+        for loc in luxury_wall_locs:
             self.spawn_and_upgrade_FILTER(game_state, loc)
             if game_state.number_affordable(DESTRUCTOR) < 3:
                 return
