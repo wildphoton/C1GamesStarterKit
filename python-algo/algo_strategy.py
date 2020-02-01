@@ -202,6 +202,7 @@ class AlgoStrategy(gamelib.AlgoCore):
             #         self.spawn_and_upgrade_FILTER(game_state, [loc[0]+1, loc[1]])
             #     for loc in destr_locs_multilevel[level-1]:
             #         self.spawn_and_upgrade_FILTER(game_state, [loc[0]-1, loc[1]])
+        
 
     def check_finish_level(self, game_state, locs):
         # check if a level of defenses has been built
@@ -335,9 +336,12 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
 
-            # Lastly, if we have spare cores, let's build some Encryptors to boost our Pings' health.
-            # encryptor_locations = [[13, 2], [14, 2], [13, 3], [14, 3]]
-            # game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
+            # If we have spare cores, let's build some Encryptors to boost our Pings' health.
+            encryptor_locations = [[6,10], [21,10]]
+            game_state.attempt_spawn(ENCRYPTOR, encryptor_locations)
+            
+            if game_state.number_affordable(DESTRUCTOR) >= 6:
+                self.build_luxury_defense(game_state)
 
 
     def build_defences(self, game_state):
@@ -375,6 +379,14 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         if self._got_scored_on_corner(left=False):
             self.protect_right_corner(game_state) # check if have attacked
+
+    def build_luxury_defense(self, game_state):
+        luxury_destructor_locs = [[2,11],[25,11],[3,13],[24,13],[6,13],[21,13],[14,12],[16,13],[10,13]]
+        count = 0
+        for loc in luxury_destructor_locs:
+            count += game_state.attempt_spawn(DESTRUCTOR, loc, 1)
+            if count >= 4:
+                return
 
     def protect_left_corner(self,game_state):
 
