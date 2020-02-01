@@ -11,3 +11,7 @@ dist/*
 *.zip
 */.idea/*
 .idea/*
+
+*/documentation/*
+
+*.txt

@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-./scripts/zipalgo_linux python-algo my-python-algo.zip
+./scripts/zipalgo_mac python-algo python-algo_starterplus.zip

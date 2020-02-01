@@ -53,7 +53,6 @@ class AlgoStrategy(gamelib.AlgoCore):
         EMP_INFO = UnitInfo(config, 4)
         SCRAMBLER_INFO = UnitInfo(config, 5)
 
-        self.scored_on_locations = []
 
         # EMP_range = gamelib.GameUnit(EMP, self.config).attackRange()
         # gamelib.debug_write("Got scored on at: {}".format(EMP_range))
@@ -143,18 +142,12 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
 
-    """
-    From fayllkw
-    """
-    def _got_scored_on_corner(self, left=True):
-        if left:
-            targets = [[0, 13], [1, 12], [2, 11], [3, 10], [4, 9]]
-        else:
-            targets = [[27, 13], [26, 12], [25, 11], [24, 10], [23, 9]]
-        for point in self.scored_on_locations:
-            if point in targets:
-                return True
-        return False
+
+
+
+
+
+
 
 
 
@@ -174,8 +167,6 @@ class AlgoStrategy(gamelib.AlgoCore):
         For offense we will use long range EMPs if they place stationary units near the enemy's front.
         If there are no stationary units to attack in the front, we will send Pings to try and score quickly.
         """
-        # TODO the current strategy is vulnerable to ping set cornner attack
-
         # First, place basic defenses
         self.build_defences(game_state)
         # Now build reactive defenses based on where the enemy scored
@@ -197,8 +188,6 @@ class AlgoStrategy(gamelib.AlgoCore):
                 if game_state.turn_number % 2 == 1:
                     # To simplify we will just check sending them from back left and right
                     ping_spawn_location_options = [[13, 0], [14, 0]]
-                    # TODO need to check more possible sending locations
-
                     best_location = self.least_damage_spawn_location(game_state, ping_spawn_location_options)
                     game_state.attempt_spawn(PING, best_location, 1000)
 
@@ -225,43 +214,6 @@ class AlgoStrategy(gamelib.AlgoCore):
         game_state.attempt_spawn(FILTER, filter_locations)
         # upgrade filters so they soak more damage
         game_state.attempt_upgrade(filter_locations)
-
-
-        if self._got_scored_on_corner(left=True):
-            self.protect_left_corner(game_state) # check if have attacked
-
-        if self._got_scored_on_corner(left=False):
-            self.protect_right_corner(game_state) # check if have attacked
-
-    def protect_left_corner(self,game_state):
-        yellow_destructors_points = [[1, 13], [1, 12], [3, 11], [4, 11], [9, 11], [9, 10], [9, 9]]
-        yellow_encryptors_points = [[4, 10]]
-        yellow_filters_points = [[0, 13], [2, 13], [2, 12], [3, 12], [4, 12], [9, 12], [8, 11], [10, 11]]
-        for loc in yellow_destructors_points:
-            self.if_do(0.7)
-            game_state.attempt_spawn(DESTRUCTOR, loc, 1)
-        for loc in yellow_filters_points:
-            self.if_do(0.7)
-            game_state.attempt_spawn(FILTER, loc, 1)
-        for loc in yellow_encryptors_points:
-            self.if_do(0.7)
-            game_state.attempt_spawn(ENCRYPTOR, loc, 1)
-
-    def protect_right_corner(self,game_state):
-        orange_destructors_points = [[24, 13], [25, 13], [24, 12], [25, 12], [26, 12], [23, 11], [24, 11], [25, 11], [23, 10], [23, 9]]
-        orange_filters_points = [[23, 13], [26, 13], [23, 12]]
-        # orange_destructors_points = [[24, 12], [25, 12], [24, 11]]
-        # orange_filters_points = [[24, 13], [25, 13], [26, 13]]
-        for loc in orange_destructors_points:
-            self.if_do(0.7)
-            game_state.attempt_spawn(DESTRUCTOR, loc, 1)
-        for loc in orange_filters_points:
-            self.if_do(0.7)
-            game_state.attempt_spawn(FILTER, loc, 1)
-
-    def if_do(self,cut_off=0.5):
-        r = random.random()
-        return r<cut_off
 
     def build_reactive_defense(self, game_state):
         """
@@ -317,8 +269,7 @@ class AlgoStrategy(gamelib.AlgoCore):
 
         # Now spawn EMPs next to the line
         # By asking attempt_spawn to spawn 1000 units, it will essentially spawn as many as we have resources for
-        gamelib.debug_write(EMP_INFO.cost)
-        if game_state.get_resources(0)[1]// EMP_INFO.cost >= 5:
+        if game_state.get_resources(0)[1]// self.EMP_INFO.cost >= 5:
             game_state.attempt_spawn(EMP, [24, 10], 1000)
 
     def least_damage_spawn_location(self, game_state, location_options):
