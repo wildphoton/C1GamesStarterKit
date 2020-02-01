@@ -213,7 +213,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         if count == len(locs):
             return True
 
-    def emp_line_strategy_adaptive(self, game_state, left=True):
+    def emp_line_strategy_adaptive(self, game_state, left=True, scan=False):
         """
         Build a line of the cheapest stationary unit so our EMP's can attack from long range.
         """
@@ -238,12 +238,16 @@ class AlgoStrategy(gamelib.AlgoCore):
         # if left:
         #     if game_state.contains_stationary_unit([5, 12]):
         #         game_state.attempt_remove()
+        left_start = [3,10]
+        right_start = [24,10]
+
         if left:
             gate = [22, 12]
-            start_loc = [24,10]
+
+            start_loc = right_start if scan else left_start
         else:
             gate = [5, 12]
-            start_loc = [3,10]
+            start_loc = left_start if scan else right_start
 
         game_state.attempt_spawn(cheapest_unit, gate)
         game_state.attempt_remove(gate)
@@ -313,7 +317,7 @@ class AlgoStrategy(gamelib.AlgoCore):
             # Now let's analyze the enemy base to see where their defenses are concentrated.
             # If they have many units in the front we can build a line for our EMPs to attack them at long range.
             if self.detect_enemy_unit(game_state, unit_type=None, valid_x=None, valid_y=[14, 15]) > 10:
-                self.emp_line_strategy_adaptive(game_state, left=True)
+                self.emp_line_strategy_adaptive(game_state, left=True, scan=True)
 
             if self._got_scored_on_corner(left=True):
                 self.emp_line_strategy_adaptive(game_state, left=True)  # check if have attacked
