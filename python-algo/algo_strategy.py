@@ -186,8 +186,10 @@ class AlgoStrategy(gamelib.AlgoCore):
         for level in range(n_levels):
 
             # for each loc build a destructor
-            for loc in destr_locs_multilevel[level]:
-                game_state.attempt_spawn(DESTRUCTOR, loc)
+            # for loc in destr_locs_multilevel[level]:
+            game_state.attempt_spawn(DESTRUCTOR, destr_locs_multilevel[level])
+            if not self.check_finish_level(game_state, destr_locs_multilevel[level])
+                break
 
             # build filter wall
             for loc in destr_locs_multilevel[level]:
@@ -198,6 +200,15 @@ class AlgoStrategy(gamelib.AlgoCore):
                     self.spawn_and_upgrade_FILTER(game_state, [loc[0]+1, loc[1]])
                 for loc in destr_locs_multilevel[level-1]:
                     self.spawn_and_upgrade_FILTER(game_state, [loc[0]-1, loc[1]])
+
+    def check_finish_level(self, game_state, locs):
+        # check if a level of defenses has been built
+        count = 0
+        for loc in locs:
+            if game_state.contains_stationary_unit(loc):
+                count += 1
+        if count == len(locs):
+            return True
 
     """
     NOTE: All the methods after this point are part of the sample starter-algo
